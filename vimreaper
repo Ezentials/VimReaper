@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Start VimReaper: a Neovim tutor game that runs inside real Neovim.
+dir="$(dirname "$(readlink -f "$0")")"
+exec nvim --clean --cmd "set rtp^=$dir" -c "lua require('vimreaper').start()"

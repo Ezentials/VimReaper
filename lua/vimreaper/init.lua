@@ -116,14 +116,14 @@ local function render_level()
   local rows = {
     {
       { ' ☠ VimReaper ', 'VimReaperTitle' },
-      { ('  Bane %d/%d · %s · '):format(S.idx, #levels, lv.chapter), 'VimReaperDim' },
+      { ('  Level %d/%d · %s · '):format(S.idx, #levels, lv.chapter), 'VimReaperDim' },
       { lv.title, 'VimReaperHead' },
     },
     { { ' ' .. lv.task } },
     { { ' Tip: ', 'VimReaperDim' }, { lv.tip } },
   }
   if lv.goal then
-    table.insert(rows, { { ' Sådan skal teksten ende:', 'VimReaperDim' } })
+    table.insert(rows, { { ' The text should end up like this:', 'VimReaperDim' } })
     for _, l in ipairs(lv.goal) do
       table.insert(rows, { { '   │ ', 'VimReaperDim' }, { l, 'VimReaperGoal' } })
     end
@@ -132,20 +132,20 @@ local function render_level()
   if S.done then
     local r = S.result
     table.insert(rows, {
-      { (' ☠ Høstet!  %d tryk (par %d)  ' ):format(S.keys, lv.par), 'VimReaperHead' },
+      { (' ☠ Reaped!  %d keys (par %d)  ' ):format(S.keys, lv.par), 'VimReaperHead' },
       { star_text(r.stars), 'VimReaperStar' },
-      { ('  %.1f sek.'):format(r.secs), 'VimReaperDim' },
+      { ('  %.1fs'):format(r.secs), 'VimReaperDim' },
     })
-    table.insert(rows, { { ' Par-løsning: ', 'VimReaperDim' }, { table.concat(lv.solution, '  '), 'VimReaperGoal' } })
-    local next_text = S.idx < #levels and 'næste bane' or 'baneoversigten'
-    table.insert(rows, { { (' <Enter> %s · :Retry prøv igen · :Menu alle baner'):format(next_text), 'VimReaperDim' } })
+    table.insert(rows, { { ' Par solution: ', 'VimReaperDim' }, { table.concat(lv.solution, '  '), 'VimReaperGoal' } })
+    local next_text = S.idx < #levels and 'next level' or 'level list'
+    table.insert(rows, { { (' <Enter> %s · :Retry try again · :Menu all levels'):format(next_text), 'VimReaperDim' } })
   else
-    local status = { { (' Tryk: %d · Par: %d'):format(S.keys, lv.par), 'VimReaperHead' } }
+    local status = { { (' Keys: %d · Par: %d'):format(S.keys, lv.par), 'VimReaperHead' } }
     if lv.kind == 'hunt' then
-      table.insert(status, { ('  ·  Sjæle: %d/%d'):format(S.reaped, #lv.targets), 'VimReaperHead' })
+      table.insert(status, { ('  ·  Souls: %d/%d'):format(S.reaped, #lv.targets), 'VimReaperHead' })
     end
     table.insert(rows, status)
-    table.insert(rows, { { ' :Retry starter forfra · :Menu alle baner · :q afslutter', 'VimReaperDim' } })
+    table.insert(rows, { { ' :Retry restarts · :Menu all levels · :q quits', 'VimReaperDim' } })
   end
   set_info(rows)
 end
@@ -241,8 +241,8 @@ function show_menu()
   for _, l in ipairs(banner) do table.insert(lines, l) end
   vim.list_extend(lines, {
     '',
-    '  Lær Neovim ved at høste sjæle. Alt herinde er ægte Neovim.',
-    '  Gå til en bane med j/k og tryk <Enter>.',
+    '  Learn Neovim by reaping souls. Everything in here is real Neovim.',
+    '  Move to a level with j/k and press <Enter>.',
   })
   local chapter, earned = nil, 0
   for i, lv in ipairs(levels) do
@@ -273,9 +273,9 @@ function show_menu()
   api.nvim_win_set_cursor(S.game_win, { first_open or first_row, 4 })
 
   set_info({
-    { { ' ☠ VimReaper ', 'VimReaperTitle' }, { '  Baneoversigt', 'VimReaperHead' } },
-    { { (' Stjerner: %d/%d'):format(earned, #levels * 3), 'VimReaperStar' } },
-    { { ' Piletaster og mus er slået fra – her bruger man hjkl. :q afslutter.', 'VimReaperDim' } },
+    { { ' ☠ VimReaper ', 'VimReaperTitle' }, { '  Levels', 'VimReaperHead' } },
+    { { (' Stars: %d/%d'):format(earned, #levels * 3), 'VimReaperStar' } },
+    { { ' Arrow keys and mouse are off – here we use hjkl. :q quits.', 'VimReaperDim' } },
   })
 end
 
@@ -312,7 +312,7 @@ local function setup_editor()
 
   for _, k in ipairs({ '<Up>', '<Down>', '<Left>', '<Right>' }) do
     vim.keymap.set({ 'n', 'i', 'v' }, k, function()
-      api.nvim_echo({ { 'Ingen piletaster i reaperens rige – brug h j k l ☠', 'WarningMsg' } }, false, {})
+      api.nvim_echo({ { 'No arrow keys in the reaper\'s realm – use h j k l ☠', 'WarningMsg' } }, false, {})
     end)
   end
 end

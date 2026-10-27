@@ -120,8 +120,22 @@ local function render_level()
       { lv.title, 'VimReaperHead' },
     },
     { { ' ' .. lv.task } },
-    { { ' Tip: ', 'VimReaperDim' }, { lv.tip } },
   }
+  local key_w = 0
+  for _, k in ipairs(lv.keys) do key_w = math.max(key_w, #k[1]) end
+  for i, k in ipairs(lv.keys) do
+    table.insert(rows, {
+      { i == 1 and ' Use   ' or '       ', 'VimReaperDim' },
+      { k[1], 'VimReaperKey' },
+      { (' '):rep(key_w - #k[1] + 2) .. k[2] },
+    })
+  end
+  if lv.also then
+    table.insert(rows, { { ' Also useful: ', 'VimReaperDim' }, { lv.also, 'VimReaperKey' } })
+  end
+  if lv.tip then
+    table.insert(rows, { { ' Tip: ', 'VimReaperDim' }, { lv.tip } })
+  end
   if lv.goal then
     table.insert(rows, { { ' The text should end up like this:', 'VimReaperDim' } })
     for _, l in ipairs(lv.goal) do
@@ -244,6 +258,8 @@ function show_menu()
     '  Learn Neovim by reaping souls. Everything in here is real Neovim.',
     '  Move to a level with j/k and press <Enter>.',
   })
+  local title_w = 0
+  for _, lv in ipairs(levels) do title_w = math.max(title_w, #lv.title) end
   local chapter, earned = nil, 0
   for i, lv in ipairs(levels) do
     if lv.chapter ~= chapter then
@@ -252,7 +268,8 @@ function show_menu()
     end
     local stars = S.progress[lv.id] or 0
     earned = earned + stars
-    table.insert(lines, ('    %02d  %s  %s'):format(i, star_text(stars), lv.title))
+    local keys = vim.tbl_map(function(k) return k[1] end, lv.keys)
+    table.insert(lines, ('    %02d  %s  %-' .. title_w .. 's  %s'):format(i, star_text(stars), lv.title, table.concat(keys, '  ')))
     S.menu_rows[#lines] = i
     first_row = first_row or #lines
     if stars == 0 and not first_open then first_open = #lines end
@@ -263,8 +280,10 @@ function show_menu()
   for row = 1, #banner do
     api.nvim_buf_set_extmark(buf, ns, row - 1, 0, { line_hl_group = 'VimReaperBanner' })
   end
+  local keys_col = 8 + #star_text(0) + 2 + title_w + 2
   for row in pairs(S.menu_rows) do
     api.nvim_buf_set_extmark(buf, ns, row - 1, 8, { end_col = 8 + #star_text(0), hl_group = 'VimReaperStar' })
+    api.nvim_buf_set_extmark(buf, ns, row - 1, keys_col, { end_col = #lines[row], hl_group = 'VimReaperDim' })
   end
   vim.keymap.set('n', '<CR>', function()
     local i = S.menu_rows[api.nvim_win_get_cursor(0)[1]]
@@ -304,6 +323,7 @@ local function setup_editor()
     VimReaperHead = { bold = true },
     VimReaperDim = { link = 'Comment' },
     VimReaperGoal = { link = 'String' },
+    VimReaperKey = { fg = '#f39c12', bold = true },
     VimReaperOk = { fg = '#2ecc71', bold = true },
     VimReaperBad = { fg = '#e74c3c', bold = true },
     VimReaperStar = { fg = '#f1c40f' },

@@ -17,6 +17,8 @@ stay out of the way (e.g. flash.nvim taking over `s`).
   taken it.
 - **Edit levels**: change the text until it matches the goal shown at the top, then go back to
   Normal mode with `<Esc>`. ✓/✗ next to each line shows whether it is already right.
+- Each level lists the keys to use and what they do; **Also useful** names keys from earlier
+  levels that it needs. The level list shows which keys each level teaches.
 - Every level has a **par**, the number of keystrokes in a short solution. Match or beat par
   for ★★★. Once a level is done, the par solution is shown so you can see the trick.
 - `:Retry` restarts the level, `:Menu` lists all levels, `:q` quits.
@@ -29,7 +31,8 @@ Progress is saved in `progress.json` (delete it to start over).
 
 ## New levels
 
-Levels live in `lua/vimreaper/levels.lua` as plain data. Each level has a `solution`. The test
+Levels live in `lua/vimreaper/levels.lua` as plain data. Each level has `keys` (the keys it
+teaches, with a short explanation) and a `solution`. The test
 plays every solution through Neovim's real input loop and checks that the level is completed
 exactly on the last command and that the key count matches par:
 

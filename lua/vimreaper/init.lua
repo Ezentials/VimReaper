@@ -157,6 +157,9 @@ local function render_level()
     local status = { { (' Keys: %d · Par: %d'):format(S.keys, lv.par), 'VimReaperHead' } }
     if lv.kind == 'hunt' then
       table.insert(status, { ('  ·  Souls: %d/%d'):format(S.reaped, #lv.targets), 'VimReaperHead' })
+      local t = lv.targets[S.reaped + 1]
+      -- A whole-line soul can be off screen, so say which line it is on.
+      if not t[2] then table.insert(status, { ('  ·  Next soul: line %d'):format(t[1]), 'VimReaperHead' }) end
     end
     table.insert(rows, status)
     table.insert(rows, { { ' :Retry restarts · :Menu all levels · :q quits', 'VimReaperDim' } })
@@ -315,6 +318,7 @@ local function setup_editor()
   vim.o.shiftwidth = 2
   vim.o.tabstop = 2
   vim.o.laststatus = 3
+  vim.o.hlsearch = false -- search highlighting paints over the red soul
 
   local hl = {
     VimReaperSoul = { fg = '#ffffff', bg = '#c0392b', bold = true },

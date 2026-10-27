@@ -175,7 +175,7 @@ local function mark_game()
     else
       api.nvim_buf_set_extmark(S.buf, ns, t[1] - 1, 0, {
         line_hl_group = 'VimReaperSoul',
-        virt_text = { { ' ☠ hele linjen', 'VimReaperSoul' } },
+        virt_text = { { ' ☠ whole line', 'VimReaperSoul' } },
       })
     end
   else
